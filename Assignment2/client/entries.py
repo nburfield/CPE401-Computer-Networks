@@ -32,7 +32,7 @@ class entries:
         pack = self.connection.recieve(5006)
         if pack:
           dummy, meta_2, body_2 = Packet().divide(pack)
-          while len(body_2) < meta_2[0]:
+          while len(body_2) < int(meta_2[0]):
             body_2 += self.connection.recieve(5006)
           XML += body_2
     XML += "\n</wallsearch>"
@@ -67,7 +67,7 @@ class entries:
           pack = self.connection.recieve(5006)
           if pack:
             dummy, meta_2, body_2 = Packet().divide(pack)
-            while len(body_2) < meta_2[0]:
+            while len(body_2) < int(meta_2[0]):
               body_2 += self.connection.recieve(5006)
             XML += body_2
 
@@ -82,7 +82,7 @@ class entries:
         XML += m.message
         XML += "\n</post>\n"
 
-    print "... Sending results of ", XML
+    print "... Sending results."
     self.connection.UDPConnection(ip)
     self.connection.send(Packet().build("WALL " + str(len(XML)), XML), 5006)
 

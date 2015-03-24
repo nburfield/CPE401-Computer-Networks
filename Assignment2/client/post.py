@@ -73,7 +73,7 @@ class post:
     XML = "<wall>\n<type>" + messageType + "</type>\n<id>" + str(messageNumber) + "</id>\n<recipients>" + recipients + "</recipients>\n<message>\n" + post + "\n</message>\n</wall>\n"
     Wall(message=XML, time=int(time.time()), message_type=messageNumber).save()  
 
-    for f in Friend.select((Friend.accepted == True)):
+    for f in Friend.select().where((Friend.accepted == True)):
       if f.ip:
         self.connection.UDPConnection(f.ip)
         self.connection.send(Packet().build("POST " + self.connection.user + " " + str(len(XML)), XML))

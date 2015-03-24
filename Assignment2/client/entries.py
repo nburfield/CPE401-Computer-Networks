@@ -22,7 +22,7 @@ class entries:
 
     queries_sent = 0
     XML = "<wallsearch>\n"
-    for f in Friend.select((Friend.accepted == True)):
+    for f in Friend.select().where((Friend.accepted == True)):
       if f.ip:
         queries_sent += 1
         self.connection.UDPConnection(f.ip)

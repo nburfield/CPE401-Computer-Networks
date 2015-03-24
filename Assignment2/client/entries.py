@@ -63,7 +63,7 @@ class entries:
           self.connection.timeout(5.0)
           pack = self.connection.recieve(5006)
           dummy, meta_2, body_2 = Packet().divide(pack)
-          while len(body_2) < meta_2[0]:
+          while len(body_2) < int(meta_2[0]):
             body_2 += self.connection.recieve(5006)
           XML += body_2
 

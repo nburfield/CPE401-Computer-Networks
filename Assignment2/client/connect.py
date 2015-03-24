@@ -40,12 +40,12 @@ class Connect:
     else:
       print "No Connection."
 
-  def recieve(self):
+  def recieve(self, port=5005):
     if self.TCP and self.connected:
       return self.s.recv(1024)
     elif self.UDP and self.connected:
       sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-      sock.bind(('', 5006))
+      sock.bind(('', port))
       data, addr = sock.recvfrom(1024)
       return data
     else:

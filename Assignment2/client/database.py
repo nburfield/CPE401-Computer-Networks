@@ -25,6 +25,13 @@ class Chat(peewee.Model):
   class Meta:
     database = db
 
+class Wall(peewee.Model):
+  message = peewee.TextField()
+
+  class Meta:
+    database = db
+
 if __name__ == '__main__':
-  Friend.create_table()
+  #Friend.create_table()
   #Chat.create_table()
+  Wall.create_table()

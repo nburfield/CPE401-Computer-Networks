@@ -50,6 +50,7 @@ class chat:
       if inp == "1" or inp == "S" or inp == "s":
         m = False
       else:
+        post = ""
         m = True
 
     post = post.replace("\r\n\r", "")
@@ -63,7 +64,7 @@ class chat:
     while index < 3:
       try:
         self.connection.timeout(10.0)
-        data = self.connection.recieve()
+        data = self.connection.recieve(5006)
         header, meta, body = Packet().divide(data)
         if header.lower() == "delivered":
           Log().activity("Got the delivered message: header - " + header + " meta-data - " + str(meta) + " body - " + body)

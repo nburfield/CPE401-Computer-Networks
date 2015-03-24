@@ -69,5 +69,5 @@ class chat:
     print meta
     print body
     self.connection.UDPConnection(ip)
-    self.connection.send(Packet().build("DELIVERED " + connection.user + " " + meta[1], ""))
+    self.connection.send(Packet().build("DELIVERED " + connection.user + " " + meta[1], ""), 5006)
     return None, None

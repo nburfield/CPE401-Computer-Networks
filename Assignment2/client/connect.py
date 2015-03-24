@@ -14,6 +14,7 @@ class Connect:
 
   def TCPConnect(self):
     try:
+      self.UDP = False
       self.TCP = True
       self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
       self.s.connect((self.ip, self.port))
@@ -23,6 +24,7 @@ class Connect:
 
   def UDPConnection(self, udp_id):
     try:
+      self.TCP = False
       self.UDP = True
       self.udp_id = udp_id
       self.s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -30,11 +32,11 @@ class Connect:
     except:
       self.connected = False
 
-  def send(self, message):
+  def send(self, message, port=5005):
     if self.TCP and self.connected:
       self.s.send(message)
     elif self.UDP and self.connected:
-      self.s.sendto(message, (self.udp_id, 5005))
+      self.s.sendto(message, (self.udp_id, port))
     else:
       print "No Connection."
 
@@ -42,6 +44,8 @@ class Connect:
     if self.TCP and self.connected:
       return self.s.recv(1024)
     elif self.UDP and self.connected:
+      sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+      sock.bind(('', 5006))
       data, addr = sock.recvfrom(1024)
       return data
     else:
@@ -58,7 +62,7 @@ class Connect:
   def close(self):
     if self.TCP and self.connected:
       self.s.close()
-    else:
+    elif not self.connected:
       print "No Connection."
     self.TCP = False
     self.UDP = False

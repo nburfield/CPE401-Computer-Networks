@@ -58,7 +58,23 @@ class chat:
     c.save()
     self.connection.UDPConnection(f.ip)
     self.connection.send(Packet().build("CHAT " + user + " " + str(c.counter) , post))
-    print self.connection.recieve()
+
+    index = 0
+    while index < 3:
+      try:
+        self.connection.timeout(10.0)
+        data = self.connection.recieve()
+        header, meta, body = Packet().divide(data)
+        if header.lower() == "delivered":
+          Log().activity("Got the delivered message: header - " + header + " meta-data - " + str(meta) + " body - " + body)
+          index = 3
+        else:
+          Log().error("Recieved bad packet: header - " + header + " meta-data - " + str(meta) + " body - " + body)
+      except:
+        self.connection.UDPConnection(f.ip)
+        self.connection.send(Packet().build("CHAT " + user + " " + str(c.counter) , post))
+      index += 1
+
     Log().activity("Sent the chat to user: " + user + " - message: " + post)
 
     return None, None

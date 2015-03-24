@@ -3,6 +3,8 @@ from connect import Connect
 from log import Log
 from database import *
 import re
+import webbrowser
+import os
 
 class post:
   '''User to post wall messages with friends that are online.'''

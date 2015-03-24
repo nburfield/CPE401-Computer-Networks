@@ -6,6 +6,7 @@ import re
 import webbrowser
 import os
 import threading
+import time
 
 def FileOpen(f):
   webbrowser.open("file://" + os.path.abspath(f.name))
@@ -70,9 +71,9 @@ class post:
     post = post.replace("\r\n\r", "")
     post = post.replace("\n\n", "")
     XML = "<wall>\n<type>" + messageType + "</type>\n<id>" + str(messageNumber) + "</id>\n<recipients>" + recipients + "</recipients>\n<message>\n" + post + "\n</message>\n</wall>\n"
-    Wall(message=XML).save()  
+    Wall(message=XML, time=int(time.time()), message_type=messageNumber).save()  
 
-    for f in Friend.select():
+    for f in Friend.select((Friend.accepted == True)):
       if f.ip:
         self.connection.UDPConnection(f.ip)
         self.connection.send(Packet().build("POST " + self.connection.user + " " + str(len(XML)), XML))
@@ -134,7 +135,7 @@ class post:
     f.close()
 
     print "Recieved a Wall Message from: ", meta[0]
-    print "Message has type: ", messageType, " ", messageNumber, " ", type(messageNumber)
+    print "Message has type: ", messageType
     print "Message"
     print "======="
     print message

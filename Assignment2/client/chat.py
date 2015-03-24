@@ -10,13 +10,13 @@ class chat:
     self.connection = connection
 
   def execute(self):
-    for f in Friend.select():
+    for f in Friend.select().where((Friend.accepted == True)):
       print f.friend_id
 
     user = raw_input("Enter the user to send a message to: ")
 
     try:
-      f = Friend.select().where((Friend.friend_id == user))[0]
+      f = Friend.select().where((Friend.friend_id == user) & (Friend.accepted == True))[0]
     except: 
       Log().error("There is no user with that name: " + user)
       return None, None
@@ -66,12 +66,15 @@ class chat:
       try:
         self.connection.timeout(10.0)
         data = self.connection.recieve(5006)
-        header, meta, body = Packet().divide(data)
-        if header.lower() == "delivered":
-          Log().activity("Got the delivered message: header - " + header + " meta-data - " + str(meta) + " body - " + body)
-          index = 3
+        if data:
+          header, meta, body = Packet().divide(data)
+          if header.lower() == "delivered":
+            Log().activity("Got the delivered message: header - " + header + " meta-data - " + str(meta) + " body - " + body)
+            index = 3
+          else:
+            Log().error("Recieved bad packet: header - " + header + " meta-data - " + str(meta) + " body - " + body)
         else:
-          Log().error("Recieved bad packet: header - " + header + " meta-data - " + str(meta) + " body - " + body)
+          throw
       except:
         self.connection.UDPConnection(f.ip)
         self.connection.send(Packet().build("CHAT " + user + " " + str(c.counter) , post))

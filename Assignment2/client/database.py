@@ -27,6 +27,8 @@ class Chat(peewee.Model):
 
 class Wall(peewee.Model):
   message = peewee.TextField()
+  time = peewee.IntegerField()
+  message_type = peewee.IntegerField()
 
   class Meta:
     database = db

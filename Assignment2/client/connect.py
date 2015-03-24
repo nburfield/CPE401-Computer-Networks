@@ -46,8 +46,12 @@ class Connect:
     elif self.UDP and self.connected:
       sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
       sock.bind(('', port))
-      data, addr = sock.recvfrom(1024)
-      return data
+      try:
+        sock.settimeout(10.0)
+        data, addr = sock.recvfrom(1024)
+        return data
+      except:
+        return None
     else:
       print "No Connection"
 

@@ -27,13 +27,13 @@ class post:
       print "3. <P>ublic"
       i = raw_input("Enter the selection: ")
 
-      if "1" or "F" or "f":
+      if i == "1" or i == "F" or i == "f":
         messageNumber = 1
         messageType = "friends"
-      elif "2" or "O" or "o":
+      elif i == "2" or i == "O" or i == "o":
         messageNumber = 2
         messageType = "friends-of-friends"
-      elif "3" or "P" or "p":
+      elif i == "3" or i == "P" or i == "p":
         messageNumber = 3
         messageType = "public"
       else:

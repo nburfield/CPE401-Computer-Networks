@@ -75,3 +75,4 @@ class friend:
 
     print "Recieved a friend request from: " + user_id
     Log().activity("Recieved a friend request from: " + user_id)
+    return None, None

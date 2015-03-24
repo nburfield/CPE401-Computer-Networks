@@ -95,9 +95,6 @@ class post:
 
     XML = body
     if messageNumber == 2:
-      first, end = XML.split("<type>")
-      dummy, end = end.split("</type>")
-      XML = first + "<type>friends</type>" + end
       first, end = XML.split("<id>")
       dummy, end = end.split("</id>")
       XML = first + "<id>1</id>" + end
@@ -137,7 +134,7 @@ class post:
     f.close()
 
     print "Recieved a Wall Message from: ", meta[0]
-    print "Message has type: ", messageType
+    print "Message has type: ", messageType, " ", messageNumber, " ", type(messageNumber)
     print "Message"
     print "======="
     print message

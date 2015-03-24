@@ -49,7 +49,7 @@ class entries:
   def run(self, ip, data):
     header, meta, body = Packet().divide(data)
 
-    if Friend.select().where((Friend.accepted == True) & (Friend.friend_id == meta[0])) > 0
+    if Friend.select().where((Friend.accepted == True) & (Friend.friend_id == meta[0])) > 0:
       friend = True
     else: 
       friend = False

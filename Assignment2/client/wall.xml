@@ -1,6 +1,6 @@
-<file><wall>
-<type>public</type>
-<id>3</id>
+<file><wall><type>public</type><id>3</id><recipients>troy; carson; nolan; </recipients><message>hello</message></wall><wall>
+<type>friends-of-friends</type>
+<id>1</id>
 <recipients>troy; carson; nolan; </recipients>
 <message>
 hello

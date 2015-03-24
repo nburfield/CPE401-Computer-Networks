@@ -65,20 +65,26 @@ class chat:
   def run(self, ip, data):
     header, meta, body = Packet().divide(data)
 
-    print "Recieved a message from: ", meta[0]
+    try:
+      f = Friend.select().where((Friend.ip == ip))[0]
+    except: 
+      Log().error("There is no user with that ip: " + ip)
+      return None, None
+
+    print "Recieved a message from: ", f.friend_id
     print "Message"
     print "======="
     print body
 
     try:
-      c = Chat.select().where((Chat.friend_id == meta[0]))[0]
+      c = Chat.select().where((Chat.friend_id == f.friend_id))[0]
     except:
-      c = Chat(message="", counter=meta[1], friend_id=meta[0])
+      c = Chat(message="", counter=meta[1], friend_id=f.friend_id)
 
     c.counter = meta[1]
     c.message = c.message + body + "\r\n\r"
     c.save()
 
     self.connection.UDPConnection(ip)
-    self.connection.send(Packet().build("DELIVERED " + connection.user + " " + meta[1], ""))
+    self.connection.send(Packet().build("DELIVERED " + self.connection.user + " " + meta[1], ""))
     return None, None

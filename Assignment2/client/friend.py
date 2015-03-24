@@ -43,7 +43,7 @@ class friend:
       self.connection.send(Packet().build("FRIEND " + user_request, ""))
       Log().activity("Sent the friend request to user: " + user_request + " at IP: " + ip_address)
     else:
-      Log().error("No user with name: " + user_request + " exists.")
+      Log().error("No user with name, or they are not online: " + user_request + " exists.")
 
     return None, None
 

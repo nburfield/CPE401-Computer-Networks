@@ -23,8 +23,8 @@ class confirm:
       return None, None
 
     self.connection.UDPConnection(f.ip)
-    self.connection.send(Packet().build("CONFIRM " + user_request, ""))
-    Log().activity("Sent the friend request confirmation to user: " + user_request + " at IP: " + f.ip)
+    self.connection.send(Packet().build("CONFIRM " + f.friend_id, ""))
+    Log().activity("Sent the friend request confirmation to user: " + f.friend_id + " at IP: " + f.ip)
     return None, None
 
   def run(self, ip, data):

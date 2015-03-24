@@ -62,7 +62,7 @@ class post:
     for f in Friend.select():
       if f.ip:
         self.connection.UDPConnection(f.ip)
-        self.connection.send(Packet().build("POST " + self.connection.user + " " + len(XML), XML))
+        self.connection.send(Packet().build("POST " + self.connection.user + " " + str(len(XML)), XML))
 
     Log().activity("Sent the xml wall with type: " + messageType + " - message: " + XML)
     return None, None

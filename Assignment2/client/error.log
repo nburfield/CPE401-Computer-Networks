@@ -1,12 +1,0 @@
-2015-03-22 21:08:56 --> Recieved bad user input: friend
-2015-03-22 21:31:29 --> Recieved bad user input: friend
-2015-03-22 21:53:58 --> Friend request with the user with name: nolan exists.
-2015-03-22 22:07:37 --> User does not exist: Data - RESULTS19%<search></search>  Body - <search></search>
-2015-03-22 22:25:19 --> No user with name: end exists.
-2015-03-22 22:25:54 --> Friend request with the user with name: nolan exists.
-2015-03-22 22:27:11 --> Friend request with the user with name: nolan exists.
-2015-03-22 22:41:45 --> No user with name: nolan exists.
-2015-03-22 22:43:00 --> No user with name: nolan exists.
-2015-03-22 22:49:48 --> No user with name: nolan exists.
-2015-03-22 22:53:24 --> No user with name: nolan exists.
-2015-03-22 23:27:15 --> Head: RESULTS Meta-data: ['177', ''] Body: <search><find><profile><info><user_id>nolan</user_id><first>NOLAN</first><last>Burfield</last><ip>127.0.0.1</ip><updated>SOMETIME</updated></info></profile></find></search>

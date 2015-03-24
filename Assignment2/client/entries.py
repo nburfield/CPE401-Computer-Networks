@@ -41,7 +41,6 @@ class entries:
 
     f = open("wallsearch.xml", "w")
     f.write(XML)
-    f.write("</file>")
     t = threading.Thread(name="file-open", target=FileOpen, args=(f,))
     t.start()
     f.close()
@@ -66,12 +65,13 @@ class entries:
           self.connection.send(Packet().build("ENTRIES " + meta[0] + " " + meta[1], ""))
           self.connection.timeout(5.0)
           pack = self.connection.recieve(5006)
-          dummy, meta_2, body_2 = Packet().divide(pack)
-          while len(body_2) < int(meta_2[0]):
-            body_2 += self.connection.recieve(5006)
-          XML += body_2
+          if pack:
+            dummy, meta_2, body_2 = Packet().divide(pack)
+            while len(body_2) < meta_2[0]:
+              body_2 += self.connection.recieve(5006)
+            XML += body_2
 
-      for m in Wall.select().where((Wall.time > int(time.time())-int(meta[1]))):
+      for m in Wall.select().where((((int(time.time())/3600) - (Wall.time/3600)) < int(meta[1]))):
         XML += "<post>\n"
         XML += m.message
         XML += "\n</post>\n"
@@ -82,7 +82,7 @@ class entries:
         XML += m.message
         XML += "\n</post>\n"
 
-    print "... Sending results of " + XML + " " + type(XML)
+    print "... Sending results of ", XML
     self.connection.UDPConnection(ip)
     self.connection.send(Packet().build("WALL " + str(len(XML)), XML), 5006)
 

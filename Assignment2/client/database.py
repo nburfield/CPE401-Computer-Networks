@@ -26,5 +26,5 @@ class Chat(peewee.Model):
     database = db
 
 if __name__ == '__main__':
-  #Friend.create_table()
-  Chat.create_table()
+  Friend.create_table()
+  #Chat.create_table()

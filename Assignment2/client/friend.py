@@ -38,7 +38,6 @@ class friend:
         Friend(friend_id=user_request, ip=ip_address).save()
       except:
         Log().error("Friend request with the user with name: " + user_request + " exists.")
-        return None, None
       self.connection.UDPConnection(ip_address)
       self.connection.send(Packet().build("FRIEND " + user_request, ""))
       Log().activity("Sent the friend request to user: " + user_request + " at IP: " + ip_address)

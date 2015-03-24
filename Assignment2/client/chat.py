@@ -58,6 +58,7 @@ class chat:
     c.save()
     self.connection.UDPConnection(f.ip)
     self.connection.send(Packet().build("CHAT " + user + " " + str(c.counter) , post))
+    print self.connection.recieve()
     Log().activity("Sent the chat to user: " + user + " - message: " + post)
 
     return None, None
@@ -86,5 +87,5 @@ class chat:
     c.save()
 
     self.connection.UDPConnection(ip)
-    self.connection.send(Packet().build("DELIVERED " + self.connection.user + " " + meta[1], ""))
+    self.connection.send(Packet().build("DELIVERED " + self.connection.user + " " + meta[1], ""), 5006)
     return None, None

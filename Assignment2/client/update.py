@@ -12,6 +12,7 @@ class update:
     path = raw_input("Enter the path to the XML file: ")
     f = open(path, "r")
     body = f.read()
+    body = body.replace("\n", "")
     length = len(body)
     f.close
 

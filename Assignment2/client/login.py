@@ -34,15 +34,15 @@ class login:
  
     header, meta, body = Packet().divide(data)
     f = body.split("</find>")
-    print "FIND\n", f
     for u in f:
       value = re.compile('.*<user_id>([^)]*)</user_id><.*').findall(u)
-      print "VALUE\n", value
       try:
         f = Friend.select().where((Friend.friend_id == value[0]))[0]
         value = re.compile('<ip>([^)]*)</ip>').search(u)
-        print value.groups()[0]
-        f.ip = value.groups()[0]
+        if len(value.groups()) > 0:
+          f.ip = value.groups()[0]
+        else:
+          f.ip = ""
         f.save()
       except:
         pass

@@ -65,8 +65,11 @@ def PeerConnection(connection):
           while LOCKED_INPUT: pass
           LOCKED_UDP = True
           data, search = command(connection).run(addr[0], data)
-        except:
-          Log().error("Bad Packet - Head: " + header + " Meta-data: " + str(meta) + " Body: " + body)
+        except Exception as err:
+          print type(err)
+          print err.args
+          print err
+          Log().error("Bad Packet from " + addr[0] + " - Head: " + header + " Meta-data: " + str(meta) + " Body: " + body)
       except:
         pass
 

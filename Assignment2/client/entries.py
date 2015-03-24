@@ -27,12 +27,14 @@ class entries:
         queries_sent += 1
         self.connection.UDPConnection(f.ip)
         self.connection.send(Packet().build("ENTRIES " + self.connection.user + " " + search_time, ""))
+        pack = ""
         self.connection.timeout(30.0)
         pack = self.connection.recieve(5006)
-        dummy, meta_2, body_2 = Packet().divide(pack)
-        while len(body_2) < meta_2[0]:
-          body_2 += self.connection.recieve(5006)
-        XML += body_2
+        if pack:
+          dummy, meta_2, body_2 = Packet().divide(pack)
+          while len(body_2) < meta_2[0]:
+            body_2 += self.connection.recieve(5006)
+          XML += body_2
     XML += "\n</wallsearch>"
 
     Log().activity("Sent the wall requests with time: " + search_time + " to " + str(queries_sent) + " friends.")
@@ -48,6 +50,8 @@ class entries:
 
   def run(self, ip, data):
     header, meta, body = Packet().divide(data)
+
+    print "Recieved a wall query... "
 
     if Friend.select().where((Friend.accepted == True) & (Friend.friend_id == meta[0])) > 0:
       friend = True
@@ -78,6 +82,7 @@ class entries:
         XML += m.message
         XML += "\n</post>\n"
 
+    print "... Sending results of " + XML + " " + type(XML)
     self.connection.UDPConnection(ip)
     self.connection.send(Packet().build("WALL " + str(len(XML)), XML), 5006)
 

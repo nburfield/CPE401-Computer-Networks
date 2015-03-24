@@ -59,11 +59,14 @@ def PeerConnection(connection):
         data, addr = s.recvfrom(1024)
         header, meta, body = Packet().divide(data)
         header = header.lower()
-        somemodule = importlib.import_module(header)
-        command = getattr(somemodule, header)
-        while LOCKED_INPUT: pass
-        LOCKED_UDP = True
-        data, search = command(connection).run(addr[0], data)
+        try:
+          somemodule = importlib.import_module(header)
+          command = getattr(somemodule, header)
+          while LOCKED_INPUT: pass
+          LOCKED_UDP = True
+          data, search = command(connection).run(addr[0], data)
+        except:
+          Log().error("Bad Packet - Head: " + header + " Meta-data: " + str(meta) + " Body: " + body)
       except:
         pass
 

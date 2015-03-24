@@ -41,7 +41,7 @@ class chat:
         if "\n\n" in post:
           break
 
-      print "\n\n", post
+      print post
       print "\nSelect what to do with the chat message above:"
       print "1. <S>end As Is"
       print "2. Re-Do <P>ost"
@@ -58,16 +58,27 @@ class chat:
     c.save()
     self.connection.UDPConnection(f.ip)
     self.connection.send(Packet().build("CHAT " + user + " " + str(c.counter) , post))
-    print self.connection.recieve()
     Log().activity("Sent the chat to user: " + user + " - message: " + post)
 
     return None, None
 
   def run(self, ip, data):
     header, meta, body = Packet().divide(data)
-    print header
-    print meta
+
+    print "Recieved a message from: ", meta[0]
+    print "Message"
+    print "======="
     print body
+
+    try:
+      c = Chat.select().where((Chat.friend_id == meta[0]))[0]
+    except:
+      c = Chat(message="", counter=meta[1], friend_id=meta[0])
+
+    c.counter = meta[1]
+    c.message = c.message + body + "\r\n\r"
+    c.save()
+
     self.connection.UDPConnection(ip)
-    self.connection.send(Packet().build("DELIVERED " + connection.user + " " + meta[1], ""), 5006)
+    self.connection.send(Packet().build("DELIVERED " + connection.user + " " + meta[1], ""))
     return None, None

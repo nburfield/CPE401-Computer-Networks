@@ -5,6 +5,10 @@ from database import *
 import re
 import webbrowser
 import os
+import threading
+
+def FileOpen(f):
+  webbrowser.open("file://" + os.path.abspath(f.name))
 
 class post:
   '''User to post wall messages with friends that are online.'''
@@ -114,9 +118,22 @@ class post:
             self.connection.UDPConnection(f.ip)
             self.connection.send(Packet().build("POST " + meta[0] + " " + str(len(XML)), XML))
 
-    f = open("wall.xml", "a")
-    f.write(body)
-    webbrowser.open("file://" + os.path.abspath(f.name))
+    try:
+      f = open("wall.xml", "r")
+      browser = f.read()
+      browser = browser.split("\n")
+      browser.pop()
+      f.close()
+    except:
+      browser = ["<file>"]
+
+    f = open("wall.xml", "w")
+    for l in browser:
+      f.write(l)
+    f.write(XML)
+    f.write("</file>")
+    t = threading.Thread(name="file-open", target=FileOpen, args=(f,))
+    t.start()
     f.close()
 
     print "Recieved a Wall Message from: ", meta[0]

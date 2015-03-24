@@ -2,6 +2,7 @@ from packet import Packet
 from connect import Connect
 from log import Log
 from database import *
+import re
 
 class post:
   '''User to post wall messages with friends that are online.'''
@@ -55,8 +56,14 @@ class post:
         post = ""
         m = True
 
+    recipients = self.connection.user + "; "
+    for f in Friend.select():
+      if f.ip:
+        recipients += f.friend_id + "; "
+
     post = post.replace("\r\n\r", "")
-    XML = "<wall>\n<type>" + messageType + "</type>\n<id>" + str(messageNumber) + "</id>\n<message>\n" + post + "\n</message>\n</wall>\n"
+    post = post.replace("\n\n", "")
+    XML = "<wall>\n<type>" + messageType + "</type>\n<id>" + str(messageNumber) + "</id>\n<recipients>" + recipients + "</recipients>\n<message>\n" + post + "\n</message>\n</wall>\n"
     Wall(message=XML).save()  
 
     for f in Friend.select():
@@ -74,9 +81,46 @@ class post:
     while len(body) < int(meta[1]):
       body += self.connection.recieve()
 
+    messageType = re.compile('<type>([^)]*)</type>').findall(body)[0]
+    messageNumber = int(re.compile('<id>([^)]*)</id>').findall(body)[0])
+    message = re.compile('<message>([^)]*)</message>').findall(body)[0]
+    recipients = re.compile('<recipients>([^)]*)</recipients>').findall(body)[0]
+    people = re.compile('([^; ]*)\S').findall(recipients)
+
+    XML = body
+    if messageNumber == 2:
+      first, end = XML.split("<type>")
+      dummy, end = end.split("</type>")
+      XML = first + "<type>friends</type>" + end
+      first, end = XML.split("<id>")
+      dummy, end = end.split("</id>")
+      XML = first + "<id>1</id>" + end
+
+    if messageNumber == 2 or messageNumber == 3:
+      for f in Friend.select():
+        if f.ip:
+          if not f.friend_id in people:
+            recipients += f.friend_id + "; "
+
+      first, end = XML.split("<recipients>")
+      dummy, end = end.split("</recipients>")
+      XML = first + "<recipients>" + recipients + "</recipients>" + end
+
+      for f in Friend.select():
+        if f.ip:
+          if not f.friend_id in people:
+            self.connection.UDPConnection(f.ip)
+            self.connection.send(Packet().build("POST " + meta[0] + " " + str(len(XML)), XML))
+
+    f = open("wall.xml", "a")
+    f.write(body)
+    webbrowser.open("file://" + os.path.abspath(f.name))
+    f.close()
+
     print "Recieved a Wall Message from: ", meta[0]
+    print "Message has type: ", messageType
     print "Message"
     print "======="
-    print body
+    print message
 
     return None, None

@@ -54,6 +54,7 @@ class chat:
         m = True
 
     post = post.replace("\r\n\r", "")
+    post = post.replace("\n\n", "")
     c.counter = c.counter + 1
     c.message = c.message + post + "\r\n\r"
     c.save()

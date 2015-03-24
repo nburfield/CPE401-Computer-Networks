@@ -31,10 +31,6 @@ def runServer(connection):
         LOCKED_INPUT = True
         data, search = command(connection).execute()
         if data and search: response(data, search)
-      except Exception as err:
-        print type(err)
-        print err.args
-        print err
       except:
         Log().error("Recieved bad user input: " + header)
         print "Inproper Input."
@@ -65,10 +61,7 @@ def PeerConnection(connection):
           while LOCKED_INPUT: pass
           LOCKED_UDP = True
           data, search = command(connection).run(addr[0], data)
-        except Exception as err:
-          print type(err)
-          print err.args
-          print err
+        except:
           Log().error("Bad Packet from " + addr[0] + " - Head: " + header + " Meta-data: " + str(meta) + " Body: " + body)
       except:
         pass

@@ -63,7 +63,10 @@ public class Search extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                client = new Socket("10.0.2.2", 3000);
+                AppState global = (AppState)getApplication();
+                String ip = global.getIp();
+                Integer port = global.getServer_port();
+                client = new Socket(ip, port);
                 printwriter = new PrintWriter(client.getOutputStream(), true);
                 String value = message.send();
                 Log.v(TAG, value);
@@ -82,7 +85,7 @@ public class Search extends Activity {
                 }
 
                 result = new Packet("", "", "");
-                result.result(data);
+                result.result(data, ip);
                 Log.v(TAG, result.getHeader());
                 Log.v(TAG, result.getData());
                 Log.v(TAG, result.getBody());

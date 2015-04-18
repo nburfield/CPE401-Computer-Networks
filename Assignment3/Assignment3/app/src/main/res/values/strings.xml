@@ -12,4 +12,7 @@
     <string name="title_activity_chat">Chat</string>
     <string name="title_activity_post">Post</string>
     <string name="title_activity_entries">Entries</string>
+    <string name="title_activity_server">Server</string>
+    <string name="title_activity_client">Client</string>
+    <string name="title_activity_friend_request">FriendRequest</string>
 </resources>

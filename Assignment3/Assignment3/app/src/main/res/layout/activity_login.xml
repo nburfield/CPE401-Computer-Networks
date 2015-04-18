@@ -28,9 +28,9 @@
         android:layout_height="wrap_content"
         android:text="Login"
         android:id="@+id/login"
-        android:layout_below="@+id/login_id"
-        android:layout_centerHorizontal="true"
-        android:onClick="onLogin" />
+        android:onClick="onLogin"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,5 +41,37 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="33dp"
         android:onClick="changeRegister" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/ip_input"
+        android:layout_below="@+id/login_id"
+        android:layout_centerHorizontal="true"
+        android:hint="IP Address" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/peer_port"
+        android:layout_below="@+id/ip_input"
+        android:layout_alignLeft="@+id/ip_input"
+        android:layout_alignStart="@+id/ip_input"
+        android:hint="Peer to Peer Port" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/server_port"
+        android:hint="Server Port"
+        android:layout_below="@+id/peer_port"
+        android:layout_alignLeft="@+id/peer_port"
+        android:layout_alignStart="@+id/peer_port" />
 
 </RelativeLayout>

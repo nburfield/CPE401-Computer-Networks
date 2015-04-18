@@ -43,10 +43,6 @@
             android:label="@string/title_activity_friend" >
         </activity>
         <activity
-            android:name=".Hi"
-            android:label="@string/title_activity_hi" >
-        </activity>
-        <activity
             android:name=".Chat"
             android:label="@string/title_activity_chat" >
         </activity>
@@ -57,6 +53,18 @@
         <activity
             android:name=".Entries"
             android:label="@string/title_activity_entries" >
+        </activity>
+        <activity
+            android:name=".Server"
+            android:label="@string/title_activity_server" >
+        </activity>
+        <activity
+            android:name=".Client"
+            android:label="@string/title_activity_client" >
+        </activity>
+        <activity
+            android:name=".FriendRequest"
+            android:label="@string/title_activity_friend_request" >
         </activity>
     </application>
 

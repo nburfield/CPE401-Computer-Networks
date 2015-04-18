@@ -1,5 +1,6 @@
 package edu.cse.nolanburfield.assignment3;
 
+import java.sql.SQLClientInfoException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by nolanburfield on 4/13/15.
@@ -121,15 +124,23 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Getting single friend
-    FriendDB getFriend(int accepted) {
+    FriendDB getFriend(String friend_id) {
         SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor;
+        try {
+            cursor = db.query(TABLE_FRIENDS, new String[]{ID,
+                            FRIEND_ID, ACCEPTED, IP}, FRIEND_ID + "=?",
+                    new String[]{friend_id}, null, null, null, null);
 
-        Cursor cursor = db.query(TABLE_FRIENDS, new String[] { ID,
-                        FRIEND_ID, ACCEPTED, IP }, ACCEPTED + "=?",
-                new String[] { String.valueOf(accepted) }, null, null, null, null);
-        if (cursor != null)
+        } catch (SQLiteException e) {
+            return null;
+        }
+
+        if (cursor != null && cursor.moveToNext())
             cursor.moveToFirst();
-
+        else {
+            return null;
+        }
         FriendDB friend = new FriendDB(Integer.parseInt(cursor.getString(0)),
                 cursor.getString(1), Integer.parseInt(cursor.getString(2)), cursor.getString(3));
 
@@ -139,6 +150,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Updating friend
     public int updateFriend(FriendDB friend) {
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();

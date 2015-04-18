@@ -8,13 +8,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.util.Log;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Login extends Activity {
 
@@ -22,27 +27,42 @@ public class Login extends Activity {
     private Socket client;
     private PrintWriter printwriter;
     private Packet message;
-
+    private DatabaseHandler db = new DatabaseHandler(this);
+    private AppState global;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        DatabaseHandler db = new DatabaseHandler(this);
-
+        global = (AppState)getApplication();
+        String ip = global.getIp();
+        Integer peer_port = global.getPeer_port();
+        Integer server_port = global.getServer_port();
+        final EditText ip_input = (EditText) findViewById(R.id.ip_input);
+        final EditText p_port = (EditText) findViewById(R.id.peer_port);
+        final EditText s_port = (EditText) findViewById(R.id.server_port);
+        ip_input.setText(ip);
+        p_port.setText(Integer.toString(peer_port));
+        s_port.setText(Integer.toString(server_port));
     }
 
     public void onLogin(View v) {
         final EditText login_id = (EditText) findViewById(R.id.login_id);
+        final EditText ip_input = (EditText) findViewById(R.id.ip_input);
+        final EditText p_port = (EditText) findViewById(R.id.peer_port);
+        final EditText s_port = (EditText) findViewById(R.id.server_port);
+        global.setIp(ip_input.getText().toString());
+        global.setPeer_port(Integer.parseInt(p_port.getText().toString()));
+        global.setServer_port(Integer.parseInt(s_port.getText().toString()));
         String data = login_id.getText().toString() + "%";
         message = new Packet("LOGIN", data, "");
         SendMessage sendMessageTask = new SendMessage();
-        sendMessageTask.execute();
-        AppState global = (AppState)getApplication();
         global.setLoggedIn(login_id.getText().toString());
-        Intent intent = new Intent(this, Home.class);
-        startActivity(intent);
+        sendMessageTask.execute();
+        if (global.isLoggedIn()) {
+            Intent intent = new Intent(this, Home.class);
+            startActivity(intent);
+        }
     }
 
     public void changeRegister(View view) {
@@ -55,12 +75,61 @@ public class Login extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                client = new Socket("10.0.2.2", 3000);
+                String ip = global.getIp();
+                Integer port = global.getServer_port();
+                try {
+                    client = new Socket(ip, port);
+                } catch (IOException e) {
+                    Log.e(TAG, "Server Not Responding.");
+                    global.setLoggedOut();
+                    return null;
+                }
                 printwriter = new PrintWriter(client.getOutputStream(), true);
                 String value = message.send();
                 Log.v(TAG, value);
                 printwriter.write(value);
                 printwriter.flush();
+                printwriter.close();
+                client.close();
+
+                List<FriendDB> all = new ArrayList<FriendDB>();
+                all = db.getAllFriends();
+                for (int i = 0; i < all.size(); i++) {
+                    Log.v(TAG, all.get(i).getName());
+                    Log.v(TAG, all.get(i).getIp());
+                    Packet ip_search = new Packet("SEARCH", all.get(i).getName() + "%", "");
+                    value = ip_search.send();
+                    Log.v(TAG, value);
+                    client = new Socket(ip, port);
+                    printwriter = new PrintWriter(client.getOutputStream(), true);
+                    printwriter.write(value);
+                    printwriter.flush();
+
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    String data = "";
+                    InputStream inputStream = client.getInputStream();
+
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        byteArrayOutputStream.write(buffer, 0, bytesRead);
+                        data += byteArrayOutputStream.toString("UTF-8");
+                    }
+
+                    Packet result = new Packet("", "", "");
+                    result.result(data, ip);
+                    String [] xml_data;
+                    xml_data = new String [2];
+                    xml_data = result.getBody().split("<ip>");
+                    xml_data = xml_data[1].split("</ip>");
+                    String discovered_ip = xml_data[0];
+                    all.get(i).setIp(discovered_ip);
+                    db.updateFriend(all.get(i));
+                    printwriter.close();
+                    client.close();
+                }
+
+
                 printwriter.close();
                 client.close();
             } catch (UnknownHostException e) {

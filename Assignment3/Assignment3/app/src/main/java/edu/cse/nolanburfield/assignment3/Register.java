@@ -36,10 +36,21 @@ public class Register extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        final AppState global = (AppState)getApplication();
+
+        String ip = global.getIp();
+        Integer peer_port = global.getPeer_port();
+        Integer server_port = global.getServer_port();
+        final EditText ip_input = (EditText) findViewById(R.id.ip);
         final Button reg_button = (Button) findViewById(R.id.register_button);
         final EditText reg_id = (EditText) findViewById(R.id.register_id);
         final EditText reg_first = (EditText) findViewById(R.id.register_first);
         final EditText reg_last = (EditText) findViewById(R.id.register_last);
+        final EditText p_port = (EditText) findViewById(R.id.peer_port);
+        final EditText s_port = (EditText) findViewById(R.id.server_port);
+        ip_input.setText(ip);
+        p_port.setText(Integer.toString(peer_port));
+        s_port.setText(Integer.toString(server_port));
         reg_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
@@ -47,6 +58,9 @@ public class Register extends Activity {
                 reg_id.setText("");
                 reg_first.setText("");
                 reg_last.setText("");
+                global.setIp(ip_input.getText().toString());
+                global.setPeer_port(Integer.parseInt(p_port.getText().toString()));
+                global.setServer_port(Integer.parseInt(s_port.getText().toString()));
                 message = new Packet("REGISTER", data, "");
                 SendMessage sendMessageTask = new SendMessage();
                 sendMessageTask.execute();
@@ -66,7 +80,10 @@ public class Register extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                client = new Socket("10.0.2.2", 3000);
+                AppState global = (AppState)getApplication();
+                String ip = global.getIp();
+                Integer port = global.getServer_port();
+                client = new Socket(ip, port);
                 printwriter = new PrintWriter(client.getOutputStream(), true);
                 String value = message.send();
                 printwriter.write(value);

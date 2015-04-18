@@ -7,47 +7,58 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
+import android.view.View;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.net.DatagramSocket;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
 
-public class Friend extends Activity {
 
-    private static final String TAG = "friend";
+public class FriendRequest extends Activity {
+
+    private AppState global;
+    private static final String TAG = "friend_request";
     private Socket client;
     private PrintWriter printwriter;
     private Packet message;
     private Packet result;
     byte[] send_data = new byte[1024];
     private DatabaseHandler db = new DatabaseHandler(this);
+    private Boolean accept;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend);
+        setContentView(R.layout.activity_friend_request);
+        TextView reg_id = (TextView) findViewById(R.id.request_name);
+        global = (AppState)getApplication();
+        result = global.getPacket();
+        String id = result.getData().replace("%", "");
+        reg_id.setText(id);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_friend, menu);
-        return true;
-    }
-
-    public void onRequest(View v) {
-        final EditText keyword = (EditText) findViewById(R.id.request);
-        String data = keyword.getText().toString() + "%";
+    public void doAccept(View v) {
+        String data = result.getData().replace("%", "") + "%";
         message = new Packet("SEARCH", data, "");
+        accept = true;
+        SendMessage sendMessageTask = new SendMessage();
+        sendMessageTask.execute();
+        Intent intent = new Intent(this, Home.class);
+        startActivity(intent);
+    }
+
+    public void doDeny(View v) {
+        String data = result.getData().replace("%", "") + "%";
+        message = new Packet("SEARCH", data, "");
+        accept = false;
         SendMessage sendMessageTask = new SendMessage();
         sendMessageTask.execute();
         Intent intent = new Intent(this, Home.class);
@@ -59,13 +70,11 @@ public class Friend extends Activity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                AppState global = (AppState)getApplication();
                 String ip = global.getIp();
                 Integer port = global.getServer_port();
                 client = new Socket(ip, port);
                 printwriter = new PrintWriter(client.getOutputStream(), true);
                 String value = message.send();
-                //Log.v(TAG, value);
                 printwriter.write(value);
                 printwriter.flush();
 
@@ -92,11 +101,18 @@ public class Friend extends Activity {
                     xml_data = xml_data[1].split("</user_id>");
                     String user_id = xml_data[0];
 
-                    db.addFriend(user_id, 0, discovered_ip);
+                    if (accept) {
+                        db.addFriend(user_id, 1, discovered_ip);
+                        message = new Packet("CONFIRM", global.getUser() + "%", "");
+                    } else {
+                        db.addFriend(user_id, 0, discovered_ip);
+                        message = new Packet("REJECT", global.getUser() + "%", "");
+                    }
+
                     port = global.getPeer_port();
-                    DatagramSocket client_socket = new DatagramSocket(port);
+                    DatagramSocket client_socket = global.getClientSocket();
                     InetAddress IPAddress =  InetAddress.getByName(discovered_ip);
-                    message = new Packet("FRIEND", global.getUser() + "%", "");
+
                     value = message.send();
                     Log.v(TAG, value);
                     send_data = value.getBytes();
@@ -113,6 +129,13 @@ public class Friend extends Activity {
             }
             return null;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_friend_request, menu);
+        return true;
     }
 
     @Override

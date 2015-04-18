@@ -32,6 +32,7 @@
         android:layout_alignLeft="@+id/request"
         android:layout_alignStart="@+id/request"
         android:layout_alignRight="@+id/request"
-        android:layout_alignEnd="@+id/request" />
+        android:layout_alignEnd="@+id/request"
+        android:onClick="onRequest" />
 
 </RelativeLayout>

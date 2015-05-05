@@ -75,6 +75,7 @@ public class Home extends Activity {
 
     public void onLoggout(View v) {
         AppState global = (AppState)getApplication();
+        global.UserPrivateKey = null;
         String data = global.getUser() + "%";
         message = new Packet("QUIT", data, "");
         SendMessage sendMessageTask = new SendMessage();

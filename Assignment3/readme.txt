@@ -41,3 +41,8 @@ The app will run all the server commands, and will run a HI message, and Chat me
 The application should be intuitive with the commands. 
 
 To do a Chat there will be a list of friends, and then type in the friend name initially to chat to. This will then change for a message to be sent. Type that in, and then the message will be sent b UDP to the receiving friend. 
+
+
+
+
+

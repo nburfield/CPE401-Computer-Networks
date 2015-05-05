@@ -101,11 +101,15 @@ public class FriendRequest extends Activity {
                     xml_data = xml_data[1].split("</user_id>");
                     String user_id = xml_data[0];
 
+                    xml_data = result.getBody().split("<public_key>");
+                    xml_data = xml_data[1].split("</public_key>");
+                    String public_key = xml_data[0];
+
                     if (accept) {
-                        db.addFriend(user_id, 1, discovered_ip);
+                        db.addFriend(user_id, 1, discovered_ip, public_key);
                         message = new Packet("CONFIRM", global.getUser() + "%", "");
                     } else {
-                        db.addFriend(user_id, 0, discovered_ip);
+                        db.addFriend(user_id, 0, discovered_ip, public_key);
                         message = new Packet("REJECT", global.getUser() + "%", "");
                     }
 

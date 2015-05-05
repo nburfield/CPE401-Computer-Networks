@@ -27,7 +27,12 @@ class quit:
     first, dummy = XML.split("<ip>")
     dummy, second = XML.split("</ip>")
     user.profile = first + "<ip></ip>" + second
+    XML = user.profile
+    first, dummy = XML.split("<public_key>")
+    dummy, second = XML.split("</public_key>")
+    user.profile = first + "<public_key></public_key>" + second
     Log().activity("User " + user.user_id + " logged out.")
     user.ip = ""
+    user.public_key = ""
     user.online = False
     user.save()

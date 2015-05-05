@@ -92,7 +92,11 @@ public class Friend extends Activity {
                     xml_data = xml_data[1].split("</user_id>");
                     String user_id = xml_data[0];
 
-                    db.addFriend(user_id, 0, discovered_ip);
+                    xml_data = result.getBody().split("<public_key>");
+                    xml_data = xml_data[1].split("</public_key>");
+                    String public_key = xml_data[0];
+
+                    db.addFriend(user_id, 0, discovered_ip, public_key);
                     port = global.getPeer_port();
                     DatagramSocket client_socket = new DatagramSocket(port);
                     InetAddress IPAddress =  InetAddress.getByName(discovered_ip);

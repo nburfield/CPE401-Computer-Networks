@@ -5,6 +5,7 @@ import android.app.Application;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +19,24 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 public class Login extends Activity {
 
@@ -54,7 +71,21 @@ public class Login extends Activity {
         global.setIp(ip_input.getText().toString());
         global.setPeer_port(Integer.parseInt(p_port.getText().toString()));
         global.setServer_port(Integer.parseInt(s_port.getText().toString()));
-        String data = login_id.getText().toString() + "%";
+
+        KeyPairGenerator kpg;
+        KeyPair kp;
+        PublicKey publicKey = null;
+        try {
+            kpg = KeyPairGenerator.getInstance("RSA");
+            kpg.initialize(1024);
+            kp = kpg.generateKeyPair();
+            publicKey = kp.getPublic();
+            global.UserPrivateKey = kp.getPrivate();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+
+        String data = login_id.getText().toString() + "%" + Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT) + "%";
         message = new Packet("LOGIN", data, "");
         SendMessage sendMessageTask = new SendMessage();
         global.setLoggedIn(login_id.getText().toString());
@@ -84,10 +115,11 @@ public class Login extends Activity {
                     global.setLoggedOut();
                     return null;
                 }
+
+                String encrypted = message.send();
                 printwriter = new PrintWriter(client.getOutputStream(), true);
-                String value = message.send();
-                Log.v(TAG, value);
-                printwriter.write(value);
+                Log.v(TAG, encrypted);
+                printwriter.write(encrypted);
                 printwriter.flush();
                 printwriter.close();
                 client.close();
@@ -98,11 +130,11 @@ public class Login extends Activity {
                     Log.v(TAG, all.get(i).getName());
                     Log.v(TAG, all.get(i).getIp());
                     Packet ip_search = new Packet("SEARCH", all.get(i).getName() + "%", "");
-                    value = ip_search.send();
-                    Log.v(TAG, value);
+                    encrypted = global.encryptServerPublic(ip_search.send());
+                    Log.v(TAG, encrypted);
                     client = new Socket(ip, port);
                     printwriter = new PrintWriter(client.getOutputStream(), true);
-                    printwriter.write(value);
+                    printwriter.write(encrypted);
                     printwriter.flush();
 
                     ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(1024);
@@ -128,10 +160,9 @@ public class Login extends Activity {
                     printwriter.close();
                     client.close();
                 }
-
-
                 printwriter.close();
                 client.close();
+
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {

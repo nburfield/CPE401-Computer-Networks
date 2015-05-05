@@ -16,6 +16,7 @@ class User(peewee.Model):
   profile = peewee.TextField()
   ip = peewee.CharField(default="")
   online = peewee.BooleanField(default=False)
+  public_key = peewee.CharField()
 
   class Meta:
     database = db

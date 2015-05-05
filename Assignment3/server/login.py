@@ -22,6 +22,7 @@ class login:
     Log().activity("User " + user.user_id + " logged in.")
     user.online = True
     user.ip = conn.getpeername()[0]
+    user.public_key = data[1]
     user.save()
 
     # Things that need to be done when logged in
@@ -29,4 +30,8 @@ class login:
     first, dummy = XML.split("<ip>")
     dummy, second = XML.split("</ip>")
     user.profile = first + "<ip>" + conn.getpeername()[0] + "</ip>" + second
+    XML = user.profile
+    first, dummy = XML.split("<public_key>")
+    dummy, second = XML.split("</public_key>")
+    user.profile = first + "<public_key>" + data[1] + "</public_key>" + second
     user.save()

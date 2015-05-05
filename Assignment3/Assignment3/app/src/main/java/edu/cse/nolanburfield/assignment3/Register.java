@@ -10,10 +10,15 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -54,7 +59,20 @@ public class Register extends Activity {
         reg_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 // Perform action on click
-                String data = reg_id.getText().toString() + "%" + reg_first.getText().toString() + "%" + reg_last.getText().toString() + "%";
+                KeyPairGenerator kpg;
+                KeyPair kp;
+                PublicKey publicKey = null;
+                try {
+                    kpg = KeyPairGenerator.getInstance("RSA");
+                    kpg.initialize(1024);
+                    kp = kpg.generateKeyPair();
+                    publicKey = kp.getPublic();
+                    global.UserPrivateKey = kp.getPrivate();
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                }
+
+                String data = reg_id.getText().toString() + "%" + reg_first.getText().toString() + "%" + reg_last.getText().toString() + "%" + Base64.encodeToString(publicKey.getEncoded(), Base64.DEFAULT) + "%";
                 reg_id.setText("");
                 reg_first.setText("");
                 reg_last.setText("");

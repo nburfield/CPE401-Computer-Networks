@@ -41,6 +41,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String COUNTER = "counter";
     private static final String TIME = "time";
     private static final String MESSAGE_TYPE = "message_type";
+    private static final String PUBLIC = "public_key";
 
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -51,7 +52,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String CREATE_FRIENDS_TABLE = "CREATE TABLE " + TABLE_FRIENDS + "("
                 + ID + " INTEGER PRIMARY KEY," + FRIEND_ID + " TEXT UNIQUE,"
-                + ACCEPTED + " INTEGER," + IP + " TEXT" + ")";
+                + ACCEPTED + " INTEGER," + IP + " TEXT" + PUBLIC + " TEXT" + ")";
         db.execSQL(CREATE_FRIENDS_TABLE);
 
         String CREATE_CHAT_TABLE = "CREATE TABLE " + TABLE_CHAT + "("
@@ -82,13 +83,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
      */
 
     // Adding new friend
-    void addFriend(String name, Integer accepted, String ip) {
+    void addFriend(String name, Integer accepted, String ip, String public_key) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(FRIEND_ID, name);
         values.put(ACCEPTED, accepted);
         values.put(IP, ip);
+        values.put(PUBLIC, public_key);
 
         // Inserting Row
         db.insert(TABLE_FRIENDS, null, values);
@@ -142,7 +144,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return null;
         }
         FriendDB friend = new FriendDB(Integer.parseInt(cursor.getString(0)),
-                cursor.getString(1), Integer.parseInt(cursor.getString(2)), cursor.getString(3));
+                cursor.getString(1), Integer.parseInt(cursor.getString(2)), cursor.getString(3), cursor.getString(4));
 
         // return contact
         return friend;

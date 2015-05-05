@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Application;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Base64;
 import android.util.Log;
 
 import java.net.DatagramPacket;
@@ -12,6 +13,18 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 
 /**
  * Created by nolanburfield on 4/13/15.
@@ -21,7 +34,7 @@ public class AppState extends Application {
     private static final String TAG = "thread";
     private boolean loggedin = false;
     private String user_id = "";
-    private String ip = "192.168.1.193";
+    private String ip = "192.168.1.116";
     private Integer server_port = 5000;
     private Integer peer_port = 5005;
     private static Packet result = new Packet("", "", "");
@@ -31,8 +44,47 @@ public class AppState extends Application {
     private DatabaseHandler db = new DatabaseHandler(this);
     private String alert_message = "";
     private Packet message;
+    private String ServerPublicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCj+Io5gYMxPLCUxwFL1DMiY8zHOqiqthmFZ0ij9W+c25RBQaClArcxq3KvIC6QeIktgJ5JRpqAB/lY1QB1LM4bJROVMVgnv2lCK2QPLc3vUigw2gWndivpMuI8rxZPr3pE32CMecmjHDamXJAxk/i/UM5LVtO99RYB4B4FToJGvwIDAQAB";
+    public PrivateKey UserPrivateKey;
 
     private DatagramSocket serverSocket = null;
+
+    public String getServerPublicKey() {
+        return ServerPublicKey;
+    }
+
+    public String encryptServerPublic(String value) {
+        byte [] encoded = Base64.decode(getServerPublicKey(), Base64.DEFAULT);
+        X509EncodedKeySpec keySpec = new X509EncodedKeySpec(encoded);
+        KeyFactory kf = null;
+        PublicKey publicKey = null;
+        Cipher cipher;
+        String encrypted = null;
+        byte [] encryptedBytes;
+
+        try {
+            kf = KeyFactory.getInstance("RSA");
+            publicKey = kf.generatePublic(keySpec);
+            cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, publicKey);
+            encryptedBytes = cipher.doFinal(value.getBytes());
+            encrypted = Base64.encodeToString(encryptedBytes, Base64.NO_WRAP);
+            return encrypted;
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public boolean isLoggedIn() {
         return loggedin;

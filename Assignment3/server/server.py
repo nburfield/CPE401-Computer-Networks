@@ -3,6 +3,9 @@ import sys
 import importlib
 from log import Log
 from packet import Packet
+from Crypto.PublicKey import RSA
+from base64 import b64decode
+from database import *
 
 # Functions
 def runPacket(packet, conn):
@@ -27,8 +30,20 @@ def runServer(s):
     # Get all the data from the sender
     conn, addr = s.accept()
     value = conn.recv(1024)
+    ip = conn.getpeername()[0]
+    try:
+      user = User.get(User.ip == ip)
+      private_key_file = open("PrivateKey", 'r')
+      rsa_key = RSA.importKey(private_key_file.read())
+      private_key_file.close()
+      raw_cipher_data = b64decode(value)
+      decrypt = rsa_key.decrypt(raw_cipher_data)
+    except:
+      decrypt = value
 
-    runPacket(value, conn)
+    print "\n", decrypt
+
+    runPacket(decrypt, conn)
 
     conn.close()
 

@@ -1,0 +1,107 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".Register"
+    android:id="@+id/register">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:id="@+id/register_title"
+        android:layout_marginTop="39dp"
+        android:phoneNumber="false"
+        android:password="false"
+        android:textSize="50dp"
+        android:textStyle="bold"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="User ID"
+        android:ems="10"
+        android:id="@+id/register_id"
+        android:layout_below="@+id/register_title"
+        android:layout_alignRight="@+id/register_title"
+        android:layout_alignEnd="@+id/register_title" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="First Name"
+        android:ems="10"
+        android:id="@+id/register_first"
+        android:layout_below="@+id/register_id"
+        android:layout_alignLeft="@+id/register_id"
+        android:layout_alignStart="@+id/register_id" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="Last Name"
+        android:ems="10"
+        android:id="@+id/register_last"
+        android:layout_below="@+id/register_first"
+        android:layout_alignLeft="@+id/register_first"
+        android:layout_alignStart="@+id/register_first" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        android:id="@+id/register_button"
+        android:clickable="false"
+        android:layout_below="@+id/server_port"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Login"
+        android:id="@+id/login"
+        android:layout_below="@+id/register_button"
+        android:layout_centerHorizontal="true"
+        android:onClick="changeLogin" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="IP Address"
+        android:text=""
+        android:ems="10"
+        android:id="@+id/ip"
+        android:layout_below="@+id/register_last"
+        android:layout_alignLeft="@+id/register_last"
+        android:layout_alignStart="@+id/register_last" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/peer_port"
+        android:layout_below="@+id/ip"
+        android:layout_alignLeft="@+id/ip"
+        android:layout_alignStart="@+id/ip"
+        android:hint="Peer to Peer Port" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:id="@+id/server_port"
+        android:layout_below="@+id/peer_port"
+        android:layout_alignLeft="@+id/peer_port"
+        android:layout_alignStart="@+id/peer_port"
+        android:hint="Server Port" />
+
+</RelativeLayout>

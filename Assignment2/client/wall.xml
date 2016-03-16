@@ -1,0 +1,9 @@
+<file><wall><type>friends</type><id>1</id><recipients>amy; troy; nolan; jim; </recipients><message>hello</message></wall><wall><type>friends</type><id>1</id><recipients>amy; troy; nolan; jim; </recipients><message>hello</message></wall><wall>
+<type>friends-of-friends</type>
+<id>1</id>
+<recipients>jim; tyler; amy; troy; nolan; </recipients>
+<message>
+hello
+</message>
+</wall>
+</file>
